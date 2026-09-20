@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>College Chatbot</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #eef2f3, #dfe9f3);
+        }
+
+        /* Chat Button */
+        #chatToggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px;
+            background: linear-gradient(45deg, #ee82ee, #cf9fff);
+            color: white;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Chat Container */
+        .chat-container {
+            width: 340px;
+            height: 480px;
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: #f0f2f5;
+            border-radius: 15px;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.4);
+            overflow: hidden;
+            
+            transform: translateY(20px);
+            transition: all 0.3s ease; 
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+        /* Header */
+        .chat-header {
+            background: #9400d3;
+            color: white;
+            padding: 12px;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            float: right;
+            cursor: pointer;
+        }
+
+        /* Chat Body */
+        .chat-body {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        /* Messages */
+        .message {
+            margin: 6px 0;
+            padding: 10px 14px;
+            border-radius: 15px;
+            max-width: 75%;
+            font-size: 14px;
+            line-height: 1.6;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: 0.2s;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .message a {
+           
+            display: inline-block;
+            margin: 4px 0;
+            color: #0a66c2;
+            font-weight: bold;
+        }
+
+        .message:hover {
+            transform: scale(1.02);
+        }
+
+        .user {
+            background: #cf9fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .bot {
+            background: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        /* Footer */
+        .chat-footer {
+            display: flex;
+            padding: 10px;
+            background: white;
+            border-top: 1px solid #ddd;
+        }
+
+        .chat-footer input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+        .chat-footer button {
+            margin-left: 8px;
+            background: #79045f;
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Typing Animation */
+        .dots::after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0% { content: ''; }
+            33% { content: '.'; }
+            66% { content: '..'; }
+            100% { content: '...'; }
+        }
+    </style>
+</head>
+
+<body>
+    <div style="text-align:center; margin-top:100px;">
+        <h1 style="font-size:32px;">🎓 College Chatbot System</h1>
+        <p style="color:gray;">AI-powered assistant for student queries</p>
+        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" width="120" style="margin-top:20px;">
+    </div>
+<!-- Chat Button -->
+<button id="chatToggle">💬</button>
+
+<!-- Chat Box -->
+<div class="chat-container" id="chatPopup">
+
+    <div class="chat-header">
+        🎓 College Assistant
+        <span class="close-btn" onclick="toggleChat()">✖</span>
+        <div style="font-size:12px; opacity:0.8;">Online • AI Powered</div>
+    </div>
+
+    <div id="chatbox" class="chat-body"></div>
+
+    <div class="chat-footer">
+        <input type="text" id="userInput" placeholder="Ask something...">
+        <button onclick="sendMessage()">➤</button>
+    </div>
+
+</div>
+
+<script>
+const toggle = document.getElementById("chatToggle");
+const popup = document.getElementById("chatPopup");
+
+toggle.onclick = toggleChat;
+
+function toggleChat() {
+    popup.style.display = popup.style.display === "flex" ? "none" : "flex";
+}
+
+// Welcome message
+window.onload = () => {
+    let chatbox = document.getElementById("chatbox");
+
+    chatbox.innerHTML += `
+    <div class="message bot">
+        👋 Hello! I'm your <b>College Assistant</b><br><br>
+        You can ask me about:<br>
+        🎓 Courses<br>
+        💰 Fees<br>
+        📝 Admissions<br><br>
+        Try asking something!
+    </div>
+    `;
+};
+
+// Enter key support
+document.getElementById("userInput")
+.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") sendMessage();
+});
+
+function sendMessage() {
+
+    let input = document.getElementById("userInput");
+    let msg = input.value;
+
+    if(msg.trim() === "") return;
+
+    let chatbox = document.getElementById("chatbox");
+
+    // User message
+    chatbox.innerHTML += `<div class="message user">👤 ${msg}</div>`;
+
+    // Typing animation
+    let typing = document.createElement("div");
+    typing.className = "message bot";
+    typing.innerHTML = "🤖 typing<span class='dots'></span>";
+    chatbox.appendChild(typing);
+
+    chatbox.scrollTop = chatbox.scrollHeight;
+
+    fetch("/chat", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: msg })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        setTimeout(() => {
+
+            typing.remove();
+
+            let formatted = data.response
+    .replace(/\n/g, "<br>")
+    .replace(/Facebook:\s*(https?:\/\/[^\s]+)/g,
+        'Facebook:<br><a href="$1" target="_blank">📘 Open</a><br>')
+    .replace(/X \(Twitter\):\s*(https?:\/\/[^\s]+)/g,
+        'X (Twitter):<br><a href="$1" target="_blank">🐦 Open</a><br>')
+    .replace(/LinkedIn:\s*(https?:\/\/[^\s]+)/g,
+        'LinkedIn:<br><a href="$1" target="_blank">💼 Open</a>');
+
+            chatbox.innerHTML += `<div class="message bot">🤖 ${formatted}</div>`;
+
+            chatbox.scrollTo({
+                top: chatbox.scrollHeight,
+                behavior: "smooth"
+            });
+
+        }, 800);
+
+    });
+
+    input.value = "";
+}
+</script>
+
+</body>
+</html>
