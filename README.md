@@ -1,4 +1,4 @@
-# 🎓 College Chatbot System
+# 🎓 Omniverse AI – College Chatbot
 
 An AI-powered college assistant chatbot that answers student queries related to courses, admissions, fees, departments, contact information, and other college-related information.
 
